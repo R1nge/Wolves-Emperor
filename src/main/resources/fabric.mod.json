@@ -5,14 +5,14 @@
 	"name": "Dogs Emperor",
 	"description": "Become an emperor of dogs!",
 	"authors": [
-		"Me!"
+		"R1nge"
 	],
 	"contact": {
 		"homepage": "https://github.com/R1nge",
-		"sources": "https://github.com/R1nge"
+		"sources": "https://github.com/R1nge/Dogs-Emperor"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/modid/icon.png",
+	"icon": "assets/dogs_emperor/icon.jpg",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
