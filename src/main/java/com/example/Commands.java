@@ -94,7 +94,9 @@ public class Commands {
                 var wolf = (WolfEntity) entity;
                 if (wolf.isTamed()) {
                     if (wolf.isOwner(player)) {
-                        tamedWolves.add(wolf);
+                        if (!wolf.isSitting()) {
+                            tamedWolves.add(wolf);
+                        }
                     }
                 }
             }
