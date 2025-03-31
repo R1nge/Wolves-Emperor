@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.ExampleMod.LOGGER;
+
 public class Commands {
     private double maxDistance = 50;
 
@@ -38,6 +40,10 @@ public class Commands {
                                     var target = ((EntityHitResult) raycast).getEntity();
                                     var targetLiving = ((LivingEntity) target);
                                     for (WolfEntity wolf : tamedWolves) {
+                                        if (wolf.getUuid().equals(targetLiving.getUuid())) {
+                                            LOGGER.info("Ignoring same wolf");
+                                            continue;
+                                        }
                                         wolf.setTarget(targetLiving);
                                         wolf.setAttacking(true);
                                     }
