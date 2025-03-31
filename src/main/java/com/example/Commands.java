@@ -40,7 +40,6 @@ public class Commands {
                                     for (WolfEntity wolf : tamedWolves) {
                                         wolf.setTarget(targetLiving);
                                         wolf.setAttacking(true);
-                                        wolf.tryAttack(world, targetLiving);
                                     }
                                 }
                             }
