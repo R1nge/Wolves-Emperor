@@ -23,6 +23,8 @@ public class ExampleModClient implements ClientModInitializer {
                 // Execute the command if readFile() returns true
                 var serverWorld = MinecraftClient.getInstance();
                 serverWorld.player.networkHandler.sendChatCommand("attack");
+                // play sound
+                serverWorld.player.networkHandler.sendCommand("playsound minecraft:entity.bee.death master @s");
             }
         }, 0, 1, TimeUnit.SECONDS);
 
