@@ -1,4 +1,4 @@
-package com.r1nge.dogs.emperor;
+package com.r1nge.wolves.emperor;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.entity.Entity;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.r1nge.dogs.emperor.DogsEmperorMod.LOGGER;
+import static com.r1nge.wolves.emperor.WolvesEmperorMod.LOGGER;
 
 public class Commands {
     private double maxDistance = 50;

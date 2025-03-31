@@ -1,4 +1,4 @@
-package com.r1nge.dogs.emperor;
+package com.r1nge.wolves.emperor;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -18,7 +18,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Environment(EnvType.CLIENT)
-public class DogsEmperorModClient implements ClientModInitializer {
+public class WolvesEmperorModClient implements ClientModInitializer {
 
     private static byte ticksElapsed = 0;
     private static byte tickShouldElapse = 10;
@@ -36,7 +36,7 @@ public class DogsEmperorModClient implements ClientModInitializer {
             }
         }, 0, 1, TimeUnit.SECONDS);
 
-        ClientTickEvents.END_WORLD_TICK.register(DogsEmperorModClient::detectMiddleClick);
+        ClientTickEvents.END_WORLD_TICK.register(WolvesEmperorModClient::detectMiddleClick);
     }
 
     private static void detectMiddleClick(ClientWorld clientWorld) {
@@ -46,7 +46,7 @@ public class DogsEmperorModClient implements ClientModInitializer {
                 ticksElapsed = 0;
             }
 
-            DogsEmperorMod.LOGGER.info("Ticks elapsed: {}", ticksElapsed);
+            WolvesEmperorMod.LOGGER.info("Ticks elapsed: {}", ticksElapsed);
             if (MinecraftClient.getInstance().mouse.wasMiddleButtonClicked() && ticksElapsed == 0) {
                 ticksElapsed = tickShouldElapse;
                 sendCommand();

@@ -1,31 +1,31 @@
 {
 	"schemaVersion": 1,
-	"id": "dogs_emperor",
+	"id": "wolves-emperor",
 	"version": "${version}",
-	"name": "Dogs Emperor",
-	"description": "Become an emperor of dogs!",
+	"name": "Wolves Emperor",
+	"description": "Become an emperor of all mighty wolves!",
 	"authors": [
 		"R1nge"
 	],
 	"contact": {
 		"homepage": "https://github.com/R1nge",
-		"sources": "https://github.com/R1nge/Dogs-Emperor"
+		"sources": "https://github.com/R1nge/Wolves-Emperor"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/dogs_emperor/icon.jpg",
+	"icon": "assets/wolves-emperor/icon.jpg",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.r1nge.dogs.emperor.DogsEmperorMod"
+			"com.r1nge.wolves.emperor.WolvesEmperorMod"
 		],
 		"client": [
-			"com.r1nge.dogs.emperor.DogsEmperorModClient"
+			"com.r1nge.wolves.emperor.WolvesEmperorModClient"
 		]
 	},
 	"mixins": [
-		"modid.mixins.json",
+		"wolves-emperor.mixins.json",
 		{
-			"config": "modid.client.mixins.json",
+			"config": "wolves-emperor.client.mixins.json",
 			"environment": "client"
 		}
 	],

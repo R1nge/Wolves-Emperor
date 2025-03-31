@@ -1,9 +1,9 @@
 {
 	"required": true,
-	"package": "com.r1nge.dogs.emperor.mixin",
+	"package": "com.r1nge.wolves.emperor.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"DogsEmperorMixin"
+		"WolvesEmperorMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
