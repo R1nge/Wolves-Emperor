@@ -5,7 +5,10 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.sound.AggressiveBeeSoundInstance;
+import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.sound.SoundEvents;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,11 +32,8 @@ public class ExampleModClient implements ClientModInitializer {
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         executor.scheduleAtFixedRate(() -> {
             if (readFile()) {
-                // Execute the command if readFile() returns true
-                var serverWorld = MinecraftClient.getInstance();
-                serverWorld.player.networkHandler.sendChatCommand("attack");
-                // play sound
-                serverWorld.player.networkHandler.sendCommand("playsound minecraft:entity.bee.death master @s");
+                sendCommand();
+                playSound();
                 resetFile();
             }
         }, 0, 1, TimeUnit.SECONDS);
@@ -51,13 +51,19 @@ public class ExampleModClient implements ClientModInitializer {
             ExampleMod.LOGGER.info("Ticks elapsed: {}", ticksElapsed);
             if (MinecraftClient.getInstance().mouse.wasMiddleButtonClicked() && ticksElapsed == 0) {
                 ticksElapsed = tickShouldElapse;
-                var serverWorld = MinecraftClient.getInstance();
-
-                serverWorld.player.networkHandler.sendChatCommand("attack");
-                serverWorld.player.networkHandler.sendCommand("playsound minecraft:entity.bee.death master @s");
+                sendCommand();
+                playSound();
                 resetFile();
             }
         }
+    }
+
+    private static void sendCommand() {
+        MinecraftClient.getInstance().player.networkHandler.sendChatCommand("attack");
+    }
+
+    private static void playSound() {
+        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.ENTITY_ITEM_PICKUP, 1.0F, 1.0F));
     }
 
 
