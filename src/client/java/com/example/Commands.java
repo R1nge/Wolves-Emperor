@@ -25,9 +25,9 @@ public class Commands {
     public void Initialize() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(ClientCommandManager.literal("attack")
                 .executes(context -> {
-                            var localPlayer = MinecraftClient.getInstance();
-                            var camera = localPlayer.cameraEntity;
-                            var tickProgress = localPlayer.getRenderTickCounter().getTickProgress(true);
+                            var localClient = MinecraftClient.getInstance();
+                            var camera = localClient.cameraEntity;
+                            var tickProgress = localClient.getRenderTickCounter().getTickProgress(true);
                             HitResult raycast = raycast(camera, maxDistance, maxDistance, tickProgress);
                             switch (raycast.getType()) {
                                 case MISS -> {
@@ -39,11 +39,12 @@ public class Commands {
                                 case ENTITY -> {
                                     sendMessage(context, "Hit Entity");
 
-                                    var tamedWolfs = getTamedWolfs();
+                                    var tamedWolves = getTamedWolves(localClient.player);
                                     var target = ((EntityHitResult) raycast).getEntity();
                                     var targetLiving = ((LivingEntity) target);
-                                    for (WolfEntity wolf : tamedWolfs) {
+                                    for (WolfEntity wolf : tamedWolves) {
                                         wolf.setAngryAt(targetLiving.getUuid());
+                                        wolf.setAttacker(targetLiving);
                                         sendMessage(context, wolf.getAngryAt().toString());
                                     }
                                 }
@@ -88,19 +89,21 @@ public class Commands {
         }
     }
 
-    private List<WolfEntity> getTamedWolfs() {
-        var tamedWolfs = new ArrayList<WolfEntity>();
+    private List<WolfEntity> getTamedWolves(LivingEntity player) {
+        var tamedWolves = new ArrayList<WolfEntity>();
         var entities = MinecraftClient.getInstance().world.getEntities();
         for (Entity entity : entities) {
             if (entity instanceof WolfEntity) {
                 var wolf = (WolfEntity) entity;
                 if (wolf.isTamed()) {
-                    tamedWolfs.add(wolf);
+                    if (wolf.isOwner(player)) {
+                        tamedWolves.add(wolf);
+                    }
                 }
             }
         }
 
-        return tamedWolfs;
+        return tamedWolves;
     }
 }
 
