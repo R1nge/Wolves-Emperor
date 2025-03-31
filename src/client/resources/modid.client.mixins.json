@@ -3,7 +3,7 @@
 	"package": "com.r1nge.dogs.emperor.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
-		"client.ExampleClientMixin"
+		"client.DogsEmperorMixinClient"
 	],
 	"injectors": {
 		"defaultRequire": 1
