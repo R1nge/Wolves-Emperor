@@ -19,14 +19,24 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Scanner;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class Commands {
     private double maxDistance = 50;
 
     public void Initialize() {
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        executor.scheduleAtFixedRate(this::readFile, 0, 1, TimeUnit.SECONDS);
+
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(CommandManager.literal("attack")
                 .executes(context -> {
                             var server = context.getSource().getServer();
@@ -102,6 +112,26 @@ public class Commands {
         }
 
         return tamedWolves;
+    }
+
+    private boolean readFile() {
+        try {
+            File myObj = new File("E:\\MyMods\\TEST.txt");
+            Scanner myReader = new Scanner(myObj);
+            while (myReader.hasNextLine()) {
+                String data = myReader.nextLine();
+                if (data.contains("true")) {
+                    return true;
+                }
+                System.out.println(data);
+            }
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+
+        return false;
     }
 }
 
