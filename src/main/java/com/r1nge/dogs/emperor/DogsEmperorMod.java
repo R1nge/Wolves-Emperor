@@ -1,4 +1,4 @@
-package com.example;
+package com.r1nge.dogs.emperor;
 
 import net.fabricmc.api.ModInitializer;
 
@@ -7,8 +7,8 @@ import net.minecraft.server.MinecraftServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ExampleMod implements ModInitializer {
-    public static final String MOD_ID = "modid";
+public class DogsEmperorMod implements ModInitializer {
+    public static final String MOD_ID = "dogs_emperor";
 
     // This logger is used to write text to the console and the log file.
     // It is considered best practice to use your mod id as the logger's name.
@@ -19,7 +19,7 @@ public class ExampleMod implements ModInitializer {
 
     public static void init() {
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {
-            ExampleMod.server = server;
+            DogsEmperorMod.server = server;
         });
     }
 
@@ -32,7 +32,7 @@ public class ExampleMod implements ModInitializer {
         // This code runs as soon as Minecraft is in a mod-load-ready state.
         // However, some things (like resources) may still be uninitialized.
         // Proceed with mild caution.
-        ExampleMod.init();
+        DogsEmperorMod.init();
         LOGGER.info("Hello Fabric world!");
         commands.Initialize();
     }

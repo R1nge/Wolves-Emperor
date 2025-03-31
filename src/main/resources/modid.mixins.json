@@ -3,7 +3,7 @@
 	"package": "com.example.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"ExampleMixin"
+      "com.r1nge.dogs.emperor.mixin.ExampleMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

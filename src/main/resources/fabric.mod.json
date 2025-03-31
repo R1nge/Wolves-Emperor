@@ -1,25 +1,25 @@
 {
 	"schemaVersion": 1,
-	"id": "modid",
+	"id": "dogs_emperor",
 	"version": "${version}",
-	"name": "Example mod",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"name": "Dogs Emperor",
+	"description": "Become an emperor of dogs!",
 	"authors": [
 		"Me!"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://github.com/R1nge",
+		"sources": "https://github.com/R1nge"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/modid/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.example.ExampleMod"
+			"com.r1nge.dogs.emperor.DogsEmperorMod"
 		],
 		"client": [
-			"com.example.ExampleModClient"
+			"com.r1nge.dogs.emperor.DogsEmperorModClient"
 		]
 	},
 	"mixins": [

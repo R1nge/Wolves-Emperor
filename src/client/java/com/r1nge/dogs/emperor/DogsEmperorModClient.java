@@ -1,11 +1,10 @@
-package com.example;
+package com.r1nge.dogs.emperor;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.sound.AggressiveBeeSoundInstance;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.sound.SoundEvents;
@@ -17,10 +16,9 @@ import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 @Environment(EnvType.CLIENT)
-public class ExampleModClient implements ClientModInitializer {
+public class DogsEmperorModClient implements ClientModInitializer {
 
     private static byte ticksElapsed = 0;
     private static byte tickShouldElapse = 10;
@@ -38,7 +36,7 @@ public class ExampleModClient implements ClientModInitializer {
             }
         }, 0, 1, TimeUnit.SECONDS);
 
-        ClientTickEvents.END_WORLD_TICK.register(ExampleModClient::detectMiddleClick);
+        ClientTickEvents.END_WORLD_TICK.register(DogsEmperorModClient::detectMiddleClick);
     }
 
     private static void detectMiddleClick(ClientWorld clientWorld) {
@@ -48,7 +46,7 @@ public class ExampleModClient implements ClientModInitializer {
                 ticksElapsed = 0;
             }
 
-            ExampleMod.LOGGER.info("Ticks elapsed: {}", ticksElapsed);
+            DogsEmperorMod.LOGGER.info("Ticks elapsed: {}", ticksElapsed);
             if (MinecraftClient.getInstance().mouse.wasMiddleButtonClicked() && ticksElapsed == 0) {
                 ticksElapsed = tickShouldElapse;
                 sendCommand();
