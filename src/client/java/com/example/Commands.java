@@ -5,6 +5,8 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.text.Text;
@@ -14,6 +16,9 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Commands {
     private double maxDistance = 50;
 
@@ -22,18 +27,25 @@ public class Commands {
                 .executes(context -> {
                             var localPlayer = MinecraftClient.getInstance();
                             var camera = localPlayer.cameraEntity;
-                            var position = camera.getPos();
                             var tickProgress = localPlayer.getRenderTickCounter().getTickProgress(true);
-                            var raycast = Raycast(camera, maxDistance, maxDistance, tickProgress);
+                            HitResult raycast = raycast(camera, maxDistance, maxDistance, tickProgress);
                             switch (raycast.getType()) {
                                 case MISS -> {
-                                    SendMessage(context, "Hit nothing");
+                                    sendMessage(context, "Hit nothing");
                                 }
                                 case BLOCK -> {
-                                    SendMessage(context, "Hit block");
+                                    sendMessage(context, "Hit block");
                                 }
                                 case ENTITY -> {
-                                    SendMessage(context, "Hit Entity");
+                                    sendMessage(context, "Hit Entity");
+
+                                    var tamedWolfs = getTamedWolfs();
+                                    var target = ((EntityHitResult) raycast).getEntity();
+                                    var targetLiving = ((LivingEntity) target);
+                                    for (WolfEntity wolf : tamedWolfs) {
+                                        wolf.setAngryAt(targetLiving.getUuid());
+                                        sendMessage(context, wolf.getAngryAt().toString());
+                                    }
                                 }
                             }
 
@@ -43,11 +55,11 @@ public class Commands {
                 )));
     }
 
-    private void SendMessage(CommandContext<FabricClientCommandSource> context, String message) {
+    private void sendMessage(CommandContext<FabricClientCommandSource> context, String message) {
         context.getSource().sendFeedback(Text.literal(message));
     }
 
-    private HitResult Raycast(Entity camera, double blockInteractionRange, double entityInteractionRange, float tickProgress) {
+    private HitResult raycast(Entity camera, double blockInteractionRange, double entityInteractionRange, float tickProgress) {
         double distance = Math.max(blockInteractionRange, entityInteractionRange);
         double distanceSquared = MathHelper.square(distance);
         Vec3d vec3d = camera.getCameraPosVec(tickProgress);
@@ -74,6 +86,21 @@ public class Commands {
         } else {
             return hitResult;
         }
+    }
+
+    private List<WolfEntity> getTamedWolfs() {
+        var tamedWolfs = new ArrayList<WolfEntity>();
+        var entities = MinecraftClient.getInstance().world.getEntities();
+        for (Entity entity : entities) {
+            if (entity instanceof WolfEntity) {
+                var wolf = (WolfEntity) entity;
+                if (wolf.isTamed()) {
+                    tamedWolfs.add(wolf);
+                }
+            }
+        }
+
+        return tamedWolfs;
     }
 }
 
