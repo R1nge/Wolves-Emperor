@@ -1,18 +1,18 @@
 package com.example;
 
+import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.MinecraftClient;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -21,41 +21,32 @@ import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Commands {
     private double maxDistance = 50;
 
     public void Initialize() {
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(ClientCommandManager.literal("attack")
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(CommandManager.literal("attack")
                 .executes(context -> {
-                            var localClient = MinecraftClient.getInstance();
-                            var world = localClient.world;
-                            var camera = localClient.cameraEntity;
-                            var tickProgress = localClient.getRenderTickCounter().getTickProgress(true);
+                            var server = context.getSource().getServer();
+                            var player = context.getSource().getPlayer();
+                            var world = player.getServerWorld();
+                            var camera = player.getCameraEntity();
+                            //TODO: fix tick progress
+                            var tickProgress = 1;
                             HitResult raycast = raycast(camera, maxDistance, maxDistance, tickProgress);
                             switch (raycast.getType()) {
-                                case MISS -> {
-                                    sendMessage(context, "Hit nothing");
-                                }
-                                case BLOCK -> {
-                                    sendMessage(context, "Hit block");
+                                case MISS, BLOCK -> {
                                 }
                                 case ENTITY -> {
-                                    sendMessage(context, "Hit Entity");
-
-                                    var tamedWolves = getTamedWolves(localClient.player);
+                                    var tamedWolves = getTamedWolves(world, player);
                                     var target = ((EntityHitResult) raycast).getEntity();
                                     var targetLiving = ((LivingEntity) target);
-                                    var server = MinecraftClient.getInstance().getServer();
                                     for (WolfEntity wolf : tamedWolves) {
                                         wolf.setTarget(targetLiving);
                                         wolf.setAttacking(true);
-
-                                        server.execute(() -> {
-                                            RegistryKey<World> worldKey = wolf.getWorld().getRegistryKey();
-                                            ServerWorld serverWorld = server.getWorld(worldKey);
-                                            wolf.tryAttack(serverWorld, targetLiving);
-                                        });
+                                        wolf.tryAttack(world, targetLiving);
                                     }
                                 }
                             }
@@ -64,10 +55,6 @@ public class Commands {
                             return 1;
                         }
                 )));
-    }
-
-    private void sendMessage(CommandContext<FabricClientCommandSource> context, String message) {
-        context.getSource().sendFeedback(Text.literal(message));
     }
 
     private HitResult raycast(Entity camera, double blockInteractionRange, double entityInteractionRange, float tickProgress) {
@@ -99,9 +86,10 @@ public class Commands {
         }
     }
 
-    private List<WolfEntity> getTamedWolves(LivingEntity player) {
+    private List<WolfEntity> getTamedWolves(ServerWorld serverWorld, LivingEntity player) {
         var tamedWolves = new ArrayList<WolfEntity>();
-        var entities = MinecraftClient.getInstance().world.getEntities();
+        var entities = serverWorld.getEntitiesByClass(WolfEntity.class, player.getBoundingBox().expand(50), wolf -> // Increase the bounding box to search wider area
+                wolf.isTamed()).stream().collect(Collectors.toList());
         for (Entity entity : entities) {
             if (entity instanceof WolfEntity) {
                 var wolf = (WolfEntity) entity;

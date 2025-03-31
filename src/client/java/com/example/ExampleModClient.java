@@ -4,11 +4,9 @@ import net.fabricmc.api.ClientModInitializer;
 
 public class ExampleModClient implements ClientModInitializer {
 
-    public Commands commands = new Commands();
 
     @Override
     public void onInitializeClient() {
         // This entrypoint is suitable for setting up client-specific logic, such as rendering.
-        commands.Initialize();
     }
 }
