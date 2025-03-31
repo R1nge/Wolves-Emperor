@@ -50,7 +50,7 @@ else:
 
 n_models = len(owwModel.models.keys())
 
-last_time = 0
+last_activation_time = 0
 
 # Run capture loop continuosly, checking for wakewords
 if __name__ == "__main__":
@@ -73,20 +73,18 @@ if __name__ == "__main__":
         curr_score = format(scores[-1], '.20f').replace("-", "")
 
         print(curr_score)
+        current_time = time.time()
 
         if float(curr_score) >= 0.90:
-            current_time = time.time()
-            if current_time - last_time >= 2:
-                absolute_path = "E:/MyMods/TEST.txt"
-                with open(absolute_path, 'w') as file:
-                    file.write('true')
-
-                print("true")
-
-
-                time.sleep(2)
-                with open(absolute_path, 'w') as file:
-                    file.write('false')
-
-                print("false")
-                last_time = current_time
+            
+            if current_time - last_activation_time < 10:
+                continue
+            absolute_path = "E:/MyMods/TEST.txt"
+            with open(absolute_path, 'w') as file:
+                file.write('true')
+            print("true")
+            time.sleep(2)
+            #with open(absolute_path, 'w') as file:
+            #    file.write('false')
+            print("false")
+            last_activation_time = current_time

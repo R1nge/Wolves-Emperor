@@ -5,6 +5,7 @@ import net.minecraft.client.MinecraftClient;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -25,6 +26,7 @@ public class ExampleModClient implements ClientModInitializer {
                 serverWorld.player.networkHandler.sendChatCommand("attack");
                 // play sound
                 serverWorld.player.networkHandler.sendCommand("playsound minecraft:entity.bee.death master @s");
+                resetFile();
             }
         }, 0, 1, TimeUnit.SECONDS);
 
@@ -49,5 +51,17 @@ public class ExampleModClient implements ClientModInitializer {
         }
 
         return false;
+    }
+
+    private void resetFile() {
+        try {
+            File myObj = new File("E:\\MyMods\\TEST.txt");
+            FileWriter myWriter = new FileWriter("E:\\MyMods\\TEST.txt");
+            myWriter.write("false");
+            myWriter.close();
+        } catch (Exception e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
     }
 }
