@@ -9,12 +9,15 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.*;
+import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +29,7 @@ public class Commands {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(ClientCommandManager.literal("attack")
                 .executes(context -> {
                             var localClient = MinecraftClient.getInstance();
+                            var world = localClient.world;
                             var camera = localClient.cameraEntity;
                             var tickProgress = localClient.getRenderTickCounter().getTickProgress(true);
                             HitResult raycast = raycast(camera, maxDistance, maxDistance, tickProgress);
@@ -42,10 +46,16 @@ public class Commands {
                                     var tamedWolves = getTamedWolves(localClient.player);
                                     var target = ((EntityHitResult) raycast).getEntity();
                                     var targetLiving = ((LivingEntity) target);
+                                    var server = MinecraftClient.getInstance().getServer();
                                     for (WolfEntity wolf : tamedWolves) {
-                                        wolf.setAngryAt(targetLiving.getUuid());
-                                        wolf.setAttacker(targetLiving);
-                                        sendMessage(context, wolf.getAngryAt().toString());
+                                        wolf.setTarget(targetLiving);
+                                        wolf.setAttacking(true);
+
+                                        server.execute(() -> {
+                                            RegistryKey<World> worldKey = wolf.getWorld().getRegistryKey();
+                                            ServerWorld serverWorld = server.getWorld(worldKey);
+                                            wolf.tryAttack(serverWorld, targetLiving);
+                                        });
                                     }
                                 }
                             }
