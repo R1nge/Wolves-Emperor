@@ -87,7 +87,6 @@ public class WolvesEmperorModClient implements ClientModInitializer {
 
     private static void resetFile() {
         try {
-            File myObj = new File("E:\\MyMods\\TEST.txt");
             FileWriter myWriter = new FileWriter("E:\\MyMods\\TEST.txt");
             myWriter.write("false");
             myWriter.close();

@@ -32,13 +32,18 @@ public class Commands {
                             //TODO: fix tick progress
                             var tickProgress = 1;
                             HitResult raycast = raycast(camera, maxDistance, maxDistance, tickProgress);
+                            var tamedWolves = getTamedWolves(world, player);
+                            var target = ((EntityHitResult) raycast).getEntity();
+                            var targetLiving = ((LivingEntity) target);
+
                             switch (raycast.getType()) {
                                 case MISS, BLOCK -> {
+                                    for (WolfEntity wolf : tamedWolves) {
+                                        wolf.setTarget(null);
+                                        wolf.setAttacking(false);
+                                    }
                                 }
                                 case ENTITY -> {
-                                    var tamedWolves = getTamedWolves(world, player);
-                                    var target = ((EntityHitResult) raycast).getEntity();
-                                    var targetLiving = ((LivingEntity) target);
                                     for (WolfEntity wolf : tamedWolves) {
                                         if (wolf.getUuid().equals(targetLiving.getUuid())) {
                                             LOGGER.info("Ignoring same wolf");
