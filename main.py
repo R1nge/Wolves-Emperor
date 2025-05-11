@@ -76,15 +76,42 @@ def create_named_pipe():
     win32pipe.ConnectNamedPipe(hPipe, None)
     print("Client connected.")
 
-    # Loop to read data from the pipe
+    last_activation_time = 0
+
     while True:
+        # Read audio data
+        audio = np.frombuffer(mic_stream.read(CHUNK), dtype=np.int16)
+        prediction = owwModel.predict(audio)
+
+        mdl = next(iter(owwModel.prediction_buffer.keys()))
+        scores = list(owwModel.prediction_buffer[mdl])
+        curr_score = format(scores[-1], '.20f').replace("-", "")
+        
+        print(curr_score)
+        current_time = time.time()
+
+        if float(curr_score) >= 0.90:
+            if current_time - last_activation_time < 10:
+                continue
+            
+            # Write to the named pipe
+            try:
+                win32file.WriteFile(hPipe, b'true\n')  # Write message to the pipe
+                print("Sent: true")
+                time.sleep(3)  # Optional delay
+                win32file.WriteFile(hPipe, b'false\n')
+                print("Sent: false")
+                last_activation_time = current_time
+            except Exception as e:
+                print("Error writing to pipe:", e)
+
+        # Read data from the pipe (if needed)
         try:
             hr, data = win32file.ReadFile(hPipe, 64*1024)  # Read up to 64 KB
             if data:
                 print("Received:", data.decode())
-                # Optionally, you can write back to the client here
         except Exception as e:
-            print("Error:", e)
+            print("Error reading from pipe:", e)
             break
 
     # Close the pipe

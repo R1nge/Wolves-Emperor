@@ -9,9 +9,7 @@ import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.sound.SoundEvents;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.*;
 import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -29,10 +27,9 @@ public class WolvesEmperorModClient implements ClientModInitializer {
 
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         executor.scheduleAtFixedRate(() -> {
-            if (readFile()) {
+            if (readFromPipe()) {
                 sendCommand();
                 playSound();
-                resetFile();
             }
         }, 0, 1, TimeUnit.SECONDS);
 
@@ -51,7 +48,6 @@ public class WolvesEmperorModClient implements ClientModInitializer {
                 ticksElapsed = tickShouldElapse;
                 sendCommand();
                 playSound();
-                resetFile();
             }
         }
     }
@@ -64,35 +60,27 @@ public class WolvesEmperorModClient implements ClientModInitializer {
         MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.ENTITY_ITEM_PICKUP, 1.0F, 1.0F));
     }
 
-
-    private static boolean readFile() {
+    private static boolean readFromPipe() {
         try {
-            File myObj = new File("E:\\MyMods\\TEST.txt");
-            Scanner myReader = new Scanner(myObj);
-            while (myReader.hasNextLine()) {
-                String data = myReader.nextLine();
-                System.out.println(data);
-                if (data.contains("true")) {
-                    return true;
-                }
+            // Connect to the pipe
+            RandomAccessFile pipe = new RandomAccessFile("\\\\.\\pipe\\minecraft\\wolvesEmperor", "rw");
+            //String echoText = "Hello word\n";
+            // write to pipe
+            //pipe.write(echoText.getBytes());
+            // read response
+            String echoResponse = pipe.readLine();
+            if (echoResponse.contains("true")) {
+                pipe.close();
+                return true;
             }
-            myReader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
+            System.out.println("Response: " + echoResponse);
+            pipe.close();
+            return false;
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return false;
-    }
-
-    private static void resetFile() {
-        try {
-            FileWriter myWriter = new FileWriter("E:\\MyMods\\TEST.txt");
-            myWriter.write("false");
-            myWriter.close();
-        } catch (Exception e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
     }
 }
