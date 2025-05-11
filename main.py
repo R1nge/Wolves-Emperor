@@ -56,6 +56,18 @@ n_models = len(owwModel.models.keys())
 
 read_fd, write_fd = os.pipe()
 
+def handle_client(hPipe):
+    """Function to handle client communication."""
+    while True:
+        try:
+            # Read data from the pipe
+            hr, data = win32file.ReadFile(hPipe, 64*1024)  # Read up to 64 KB
+            if data:
+                print("Received:", data.decode())
+        except Exception as e:
+            print("Error reading from pipe:", e)
+            break
+
 def create_named_pipe():
     pipe_name = r'\\.\pipe\minecraft\wolvesEmperor'
     print("Creating named pipe...")
@@ -75,6 +87,10 @@ def create_named_pipe():
     print("Waiting for client to connect...")
     win32pipe.ConnectNamedPipe(hPipe, None)
     print("Client connected.")
+
+    # Start a thread to handle client communication
+    #client_thread = threading.Thread(target=handle_client, args=(hPipe,))
+    #client_thread.start()
 
     last_activation_time = 0
 
@@ -96,67 +112,25 @@ def create_named_pipe():
             
             # Write to the named pipe
             try:
-                win32file.WriteFile(hPipe, b'true\n')  # Write message to the pipe
+                win32file.WriteFile(hPipe, b'true\n')
                 print("Sent: true")
-                time.sleep(3)  # Optional delay
-                win32file.WriteFile(hPipe, b'false\n')
-                print("Sent: false")
                 last_activation_time = current_time
             except Exception as e:
                 print("Error writing to pipe:", e)
+                break  # Break inner loop to reconnect
+            except Exception as e:
+                print("Error writing to pipe:", e)
 
-        # Read data from the pipe (if needed)
-        try:
-            hr, data = win32file.ReadFile(hPipe, 64*1024)  # Read up to 64 KB
-            if data:
-                print("Received:", data.decode())
-        except Exception as e:
-            print("Error reading from pipe:", e)
-            break
+    try:
+        win32file.DisconnectNamedPipe(hPipe)
+    except:
+        pass
 
-    # Close the pipe
-    win32file.CloseHandle(hPipe)
-
-
-def write_to_pipe():
-    last_activation_time = 0
-    pipe_name = r'\\.\\pipe\\minecraft\wolvesEmperor'
-
-    if not os.path.exists(pipe_name):
-        os.mkfifo(pipe_name)
-    print("Named pipe created.")
-
-    while True:
-        audio = np.frombuffer(mic_stream.read(CHUNK), dtype=np.int16)
-        prediction = owwModel.predict(audio)
-
-        mdl = next(iter(owwModel.prediction_buffer.keys()))
-        scores = list(owwModel.prediction_buffer[mdl])
-        curr_score = format(scores[-1], '.20f').replace("-", "")
-        
-        print(curr_score)
-        current_time = time.time()
-
-        if float(curr_score) >= 0.90:
-            if current_time - last_activation_time < 10:
-                continue
-            
-            with open(pipe_name, 'w') as pipe:
-                pipe.write('true')  # Write message to the pipe
-                pipe.flush()  # Ensure the message is sent
-                time.sleep(3)  # Optional delay
-                time.sleep(2)
-                pipe.write('false')
-                pipe.flush()
-                print("false")
-                last_activation_time = current_time
-
-
-# Start the writing thread
-#threading.Thread(target=write_to_pipe, daemon=True).start()
+    # Close the pipe (this line will not be reached if the loop runs indefinitely)
+    
 
 
 # Run capture loop continuosly, checking for wakewords
 if __name__ == "__main__":
+    #threading.Thread(target=create_named_pipe, daemon=True).start()
     create_named_pipe()
-    #write_to_pipe()
