@@ -1,6 +1,8 @@
 Minecraft 1.21.5  
 https://fabricmc.net/use/installer/  
-java -jar fabric-installer-1.1.0.jar 
+java -jar fabric-installer-1.1.0.jar    
+
+Install fabric-api to the mods folder    
 https://www.curseforge.com/minecraft/mc-mods/fabric-api/download/6863346    
 
 Install anaconda  
@@ -27,6 +29,7 @@ for i in range(audio.get_device_count()):
 
 audio.terminate()
 ```
+
 sudo apt-get install libspeexdsp-dev    
 pip install https://github.com/dscripka/openWakeWord/releases/download/v0.1.1/speexdsp_ns-0.1.2-cp310-cp310-linux_x86_64.whl    
 
