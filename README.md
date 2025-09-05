@@ -1,6 +1,7 @@
 Minecraft 1.21.5  
 https://fabricmc.net/use/installer/  
-java -jar fabric-installer-1.1.0.jar  
+java -jar fabric-installer-1.1.0.jar 
+https://www.curseforge.com/minecraft/mc-mods/fabric-api/download/6863346    
 
 Install anaconda  
 https://www.anaconda.com/download/success  
