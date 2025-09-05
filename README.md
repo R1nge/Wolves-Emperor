@@ -28,7 +28,7 @@ for i in range(audio.get_device_count()):
 audio.terminate()
 ```
 sudo apt-get install libspeexdsp-dev    
-pip install https://github.com/dscripka/openWakeWord/releases/download/v0.1.1/speexdsp_ns-0.1.2-cp38-cp38-linux_x86_64.whl    
+pip install https://github.com/dscripka/openWakeWord/releases/download/v0.1.1/speexdsp_ns-0.1.2-cp310-cp310-linux_x86_64.whl    
 
 Run the python server  
 python main.py
