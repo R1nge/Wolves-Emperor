@@ -6,8 +6,7 @@ import argparse
 import time
 import threading
 import os
-import win32file
-import win32pipe
+import fcntl
 
 openwakeword.utils.download_models()
 
@@ -56,41 +55,35 @@ n_models = len(owwModel.models.keys())
 
 read_fd, write_fd = os.pipe()
 
-def handle_client(hPipe):
+def handle_client(pipe_path):
     """Function to handle client communication."""
-    while True:
-        try:
-            # Read data from the pipe
-            hr, data = win32file.ReadFile(hPipe, 64*1024)  # Read up to 64 KB
-            if data:
-                print("Received:", data.decode())
-        except Exception as e:
-            print("Error reading from pipe:", e)
-            break
+    with open(pipe_path, 'r') as pipe:
+        while True:
+            try:
+                # Read data from the pipe
+                data = pipe.read(64 * 1024)  # Read up to 64 KB
+                if data:
+                    print("Received:", data.strip())
+            except Exception as e:
+                print("Error reading from pipe:", e)
+                break
 
 def create_named_pipe():
-    pipe_name = r'\\.\pipe\minecraft\wolvesEmperor'
+    pipe_path = '/tmp/minecraft_wolvesEmperor'
     print("Creating named pipe...")
 
-    # Create the named pipe
-    hPipe = win32pipe.CreateNamedPipe(
-        pipe_name,
-        win32pipe.PIPE_ACCESS_DUPLEX,
-        win32pipe.PIPE_TYPE_MESSAGE | win32pipe.PIPE_READMODE_MESSAGE | win32pipe.PIPE_WAIT,
-        1,  # Maximum instances
-        512,  # Output buffer size
-        512,  # Input buffer size
-        0,  # Client time-out
-        None  # Default security attributes
-    )
+    # Create the named pipe (FIFO)
+    try:
+        os.mkfifo(pipe_path)
+    except FileExistsError:
+        print("Pipe already exists. Using the existing pipe.")
 
     print("Waiting for client to connect...")
-    win32pipe.ConnectNamedPipe(hPipe, None)
-    print("Client connected.")
-
+    
     # Start a thread to handle client communication
-    #client_thread = threading.Thread(target=handle_client, args=(hPipe,))
-    #client_thread.start()
+    # You can use threading or multiprocessing here if needed
+    # client_thread = threading.Thread(target=handle_client, args=(pipe_path,))
+    # client_thread.start()
 
     last_activation_time = 0
 
@@ -112,21 +105,50 @@ def create_named_pipe():
             
             # Write to the named pipe
             try:
-                win32file.WriteFile(hPipe, b'true\n')
-                print("Sent: true")
-                last_activation_time = current_time
+                with open(pipe_path, 'w') as pipe:
+                    pipe.write('true\n')
+                    print("Sent: true")
+                    last_activation_time = current_time
             except Exception as e:
                 print("Error writing to pipe:", e)
                 break  # Break inner loop to reconnect
+
+    # Clean up the named pipe
+    try:
+        os.remove(pipe_path)
+    except Exception as e:
+        print("Error removing pipe:", e)
+
+    # Start a thread to handle client communication
+    #client_thread = threading.Thread(target=handle_client, args=(hPipe,))
+    #client_thread.start()
+
+    last_activation_time = 0
+    while True:
+        # Read audio data
+        audio = np.frombuffer(mic_stream.read(CHUNK), dtype=np.int16)
+        prediction = owwModel.predict(audio)
+
+        mdl = next(iter(owwModel.prediction_buffer.keys()))
+        scores = list(owwModel.prediction_buffer[mdl])
+        curr_score = format(scores[-1], '.20f').replace("-", "")
+        
+        print(curr_score)
+        current_time = time.time()
+
+        if float(curr_score) >= 0.90:
+            if current_time - last_activation_time < 10:
+                continue
+            
+            # Write to the named pipe
+            try:
+                with open(pipe_path, 'w') as pipe:
+                    pipe.write('true\n')
+                    print("Sent: true")
+                    last_activation_time = current_time
             except Exception as e:
                 print("Error writing to pipe:", e)
-
-    try:
-        win32file.DisconnectNamedPipe(hPipe)
-    except:
-        pass
-
-    # Close the pipe (this line will not be reached if the loop runs indefinitely)
+                break  # Break inner loop to reconnect
     
 
 
