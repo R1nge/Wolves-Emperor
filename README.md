@@ -6,9 +6,9 @@ Install anaconda
 https://www.anaconda.com/download/success  
 
 Create a conda env using .yml file  
-conda env create -n wolves-emperor -f voice_attack.yaml python=3.10  
-pip3 install --extra-index-url https://google-coral.github.io/py-repo/ tflite_runtime
-
+conda env create -n wolves-emperor python=3.10  
+pip install openwakeword==0.6.0  
+conda env update -f voice_attack.yaml  
 
 Run the python server  
 python main.py
