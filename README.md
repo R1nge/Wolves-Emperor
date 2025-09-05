@@ -7,6 +7,7 @@ https://www.anaconda.com/download/success
 
 Create a conda env using .yml file  
 conda env create -n wolves-emperor -f voice_attack.yaml python=3.9.17  
+onda config --append channels https://pypi.anaconda.org/chaquo/simple  
 
 
 Run the python server  
