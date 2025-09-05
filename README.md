@@ -6,7 +6,8 @@ Install anaconda
 https://www.anaconda.com/download/success  
 
 Create a conda env using .yml file  
-conda env create -n wolves-emperor -f voice_attack.yaml  
+conda env create -n wolves-emperor -f voice_attack.yaml python=3.9.17  
+
 
 Run the python server  
 python main.py
