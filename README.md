@@ -11,6 +11,8 @@ conda env create -n wolves-emperor -f voice_attack.yaml
 Run the python server  
 python main.py
 
+Donwload the jar from releases or build from sources  
+https://github.com/R1nge/Wolves-Emperor/releases  
 Put the jar into  
 /home/{user}/.minecraft/mods  
 
