@@ -8,7 +8,7 @@ https://www.anaconda.com/download/success
 Create a conda env using .yml file  
 conda env create -n wolves-emperor python=3.10.18  
 conda install -c conda-forge libstdcxx-ng  
-sudo apt-get install portaudio19-dev or conda install PyAudio  
+conda install PyAudio  
 pip install pyaudio  
 pip install openwakeword==0.6.0  
 conda env update -f voice_attack.yaml  
