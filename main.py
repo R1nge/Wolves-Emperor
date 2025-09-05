@@ -47,9 +47,9 @@ mic_stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True,
 
 # Load pre-trained openwakeword models
 if args.model_path != "":
-    owwModel = Model(wakeword_models=[args.model_path], inference_framework=args.inference_framework)
+    owwModel = Model(wakeword_models=[args.model_path], inference_framework=args.inference_framework, enable_speex_noise_suppression=True)
 else:
-    owwModel = Model(inference_framework=args.inference_framework)
+    owwModel = Model(inference_framework=args.inference_framework, enable_speex_noise_suppression=True)
 
 n_models = len(owwModel.models.keys())
 
