@@ -6,8 +6,8 @@ Install anaconda
 https://www.anaconda.com/download/success  
 
 Create a conda env using .yml file  
-conda env create -n wolves-emperor -f voice_attack.yaml python=3.9.17  
-onda config --append channels https://pypi.anaconda.org/chaquo/simple  
+conda env create -n wolves-emperor -f voice_attack.yaml python=3.10  
+pip3 install --extra-index-url https://google-coral.github.io/py-repo/ tflite_runtime
 
 
 Run the python server  
