@@ -13,6 +13,20 @@ pip install pyaudio
 pip install openwakeword==0.6.0  
 conda env update -f voice_attack.yaml  
 
+Run this, find your mic, change the sample rate  
+https://github.com/R1nge/Wolves-Emperor/blob/1.21/main.py#L43  
+```
+import pyaudio
+
+audio = pyaudio.PyAudio()
+
+for i in range(audio.get_device_count()):
+    info = audio.get_device_info_by_index(i)
+    print(f"Device {i}: {info['name']}, Max Input Channels: {info['maxInputChannels']}, Default Sample Rate: {info['defaultSampleRate']}")
+
+audio.terminate()
+```
+
 Run the python server  
 python main.py
 
