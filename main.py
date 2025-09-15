@@ -99,7 +99,7 @@ def create_named_pipe():
         print(curr_score)
         current_time = time.time()
 
-        if float(curr_score) >= 0.90:
+        if float(curr_score) >= 0.0003:
             if current_time - last_activation_time < 10:
                 continue
             
