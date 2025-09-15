@@ -66,7 +66,7 @@ public class WolvesEmperorModClient implements ClientModInitializer {
 
     private void initializePipe() {
         try {
-            pipe = new RandomAccessFile("\\\\.\\pipe\\minecraft\\wolvesEmperor", "rw");
+            pipe = new RandomAccessFile("/tmp/WolvesEmperor", "rw");
             System.out.println("Pipe connection established");
         } catch (Exception e) {
             System.out.println("Failed to initialize pipe: " + e.getMessage());
@@ -92,7 +92,7 @@ public class WolvesEmperorModClient implements ClientModInitializer {
         } catch (Exception e) {
             // If there's an error, try to re-establish the connection
             try {
-                pipe = new RandomAccessFile("\\\\.\\pipe\\minecraft\\wolvesEmperor", "rw");
+                pipe = new RandomAccessFile("/tmp/WolvesEmperor", "rw");
             } catch (Exception re) {
                 re.printStackTrace();
             }
