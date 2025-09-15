@@ -9,7 +9,7 @@ Install anaconda
 https://www.anaconda.com/download/success  
 
 Create a conda env using .yml file  
-conda env create -n wolves-emperor python=3.10.18  
+conda create -n wolves-emperor python=3.10.18  
 conda install -c conda-forge libstdcxx-ng  
 conda install PyAudio  
 pip install pyaudio  
