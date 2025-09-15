@@ -17,14 +17,14 @@ parser.add_argument(
     "--chunk_size",
     help="How much audio (in number of samples) to predict on at once",
     type=int,
-    default=2048,
+    default=2512,
     required=False
 )
 parser.add_argument(
     "--model_path",
     help="The path of a specific model to load",
     type=str,
-    default="",
+    default="alexa",
     required=False
 )
 parser.add_argument(
@@ -43,7 +43,7 @@ CHANNELS = 1
 RATE = 48000
 CHUNK = args.chunk_size
 audio = pyaudio.PyAudio()
-mic_stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=CHUNK)
+mic_stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, input_device_index=4,frames_per_buffer=CHUNK)
 
 # Load pre-trained openwakeword models
 if args.model_path != "":
@@ -99,7 +99,7 @@ def create_named_pipe():
         print(curr_score)
         current_time = time.time()
 
-        if float(curr_score) >= 0.9:
+        if float(curr_score) >= 0.90:
             if current_time - last_activation_time < 10:
                 continue
             
