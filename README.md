@@ -16,7 +16,7 @@ pip install pyaudio
 pip install openwakeword==0.6.0  
 sudo apt-get install libspeexdsp-dev    
 pip install https://github.com/dscripka/openWakeWord/releases/download/v0.1.1/speexdsp_ns-0.1.2-cp310-cp310-linux_x86_64.whl    
-sudo apt-get install portaudio19-dev python3-pyaudio
+sudo apt-get install portaudio19-dev python3-pyaudio    
 conda env update -f voice_attack.yaml  
 
 Run this, find your mic, change the sample rate  
